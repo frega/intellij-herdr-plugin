@@ -1,0 +1,87 @@
+version: '3'
+
+vars:
+  DIST_DIR: build/distributions
+  PLUGIN_NAME: phpstorm-herdr-plugin
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list-all
+
+  compile:
+    desc: Quick compile check, no packaging
+    cmds:
+      - ./gradlew compileKotlin --console=plain
+
+  build:
+    desc: Build the installable plugin zip
+    cmds:
+      - ./gradlew buildPlugin --console=plain
+      - task: zip-path
+
+  run:
+    desc: Launch a sandboxed PhpStorm with the plugin installed, for manual testing
+    cmds:
+      - ./gradlew runIde --console=plain
+
+  clean:
+    desc: Remove build outputs
+    cmds:
+      - ./gradlew clean --console=plain
+
+  version:
+    desc: Print the current plugin version
+    cmds:
+      - grep '^version' gradle.properties | cut -d '=' -f2 | tr -d ' '
+    silent: true
+
+  bump:
+    desc: 'Bump the plugin version (LEVEL=patch|minor|major, default: patch)'
+    vars:
+      LEVEL: '{{.LEVEL | default "patch"}}'
+    cmds:
+      - |
+        LEVEL="{{.LEVEL}}" python3 - <<'PY'
+        import datetime, os, pathlib, re
+
+        level = os.environ["LEVEL"]
+        path = pathlib.Path("gradle.properties")
+        text = path.read_text()
+        match = re.search(r"^version = (\d+)\.(\d+)\.(\d+)", text, re.M)
+        if not match:
+            raise SystemExit("Could not find a 'version = X.Y.Z' line in gradle.properties")
+
+        major, minor, patch = map(int, match.groups())
+        old_version = f"{major}.{minor}.{patch}"
+
+        if level == "major":
+            major, minor, patch = major + 1, 0, 0
+        elif level == "minor":
+            minor, patch = minor + 1, 0
+        elif level == "patch":
+            patch += 1
+        else:
+            raise SystemExit(f"Unknown LEVEL: {level!r} (use patch|minor|major)")
+
+        new_version = f"{major}.{minor}.{patch}"
+        path.write_text(re.sub(r"^version = .*", f"version = {new_version}", text, flags=re.M))
+
+        print(f"Bumped version: {old_version} -> {new_version}")
+        print(f"Add a CHANGELOG.md entry under '## [{new_version}] - {datetime.date.today()}'.")
+        PY
+
+  release:
+    desc: 'Bump the version and build the zip in one step (LEVEL=patch|minor|major)'
+    cmds:
+      - task: bump
+        vars:
+          LEVEL: '{{.LEVEL | default "patch"}}'
+      - task: build
+
+  zip-path:
+    desc: Print the path to the plugin zip matching the current version
+    cmds:
+      - echo "{{.DIST_DIR}}/{{.PLUGIN_NAME}}-$(task version).zip"
+    silent: true
