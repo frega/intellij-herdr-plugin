@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-08-20
+
+### Changed
+
+- Settings → Tools → Herdr now shows whether the herdr binary was auto-detected (and where), or that it wasn't and needs to be set manually.
+- Settings panel content is pinned to the top instead of appearing vertically centered on the page.
+
 ## [0.5.0] - 2026-08-20
 
 ### Added
