@@ -1,0 +1,29 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>dev.lassen.herdr</id>
+    <name>Herdr</name>
+    <vendor>Fredrik Lassen</vendor>
+    <description><![CDATA[
+        Runs <a href="https://herdr.dev">herdr</a> in its own PhpStorm tool window, separate from the built-in Terminal tool window,
+        so it can be viewed alongside a regular shell or detached into its own floating window.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow factoryClass="dev.lassen.herdr.HerdrToolWindowFactory" id="Herdr" anchor="bottom"/>
+        <applicationService serviceImplementation="dev.lassen.herdr.settings.HerdrSettingsState"/>
+        <applicationConfigurable
+                parentId="tools"
+                instance="dev.lassen.herdr.settings.HerdrSettingsConfigurable"
+                id="dev.lassen.herdr.settings.HerdrSettingsConfigurable"
+                displayName="Herdr"/>
+    </extensions>
+
+    <actions>
+        <action id="dev.lassen.herdr.OpenHerdr" class="dev.lassen.herdr.HerdrOpenAction" text="Open Herdr"
+                description="Opens (or focuses) the Herdr tool window">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt H"/>
+        </action>
+    </actions>
+</idea-plugin>
