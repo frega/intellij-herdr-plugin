@@ -4,6 +4,26 @@
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-08-20
+
+### Added
+
+- "Agents" tab in the Herdr tool window: a flat, auto-refreshing list of every herdr agent across all running sessions, sorted by attention (blocked → done → working → unknown → idle).
+- Balloon notification when an agent newly becomes `blocked` or `done`.
+- Double-clicking an agent in that list switches the Terminal tab to its session and focuses that pane in herdr.
+
+## [0.4.0] - 2026-08-20
+
+### Added
+
+- Clickable links in the embedded herdr terminal: `http(s)://` URLs open in the system browser, and `path` or `path:line[:col]` tokens that resolve to a real file under the project root open in the PhpStorm editor at that line/column.
+
+## [0.3.0] - 2026-08-20
+
+### Changed
+
+- Settings → Tools → Herdr: replaced the plain text field (which stretched to fill the whole panel height) with a single-line field plus a native file browse button.
+
 ## [0.2.0] - 2026-08-20
 
 ### Added

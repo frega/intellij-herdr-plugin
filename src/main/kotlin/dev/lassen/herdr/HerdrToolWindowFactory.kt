@@ -20,18 +20,31 @@ class HerdrToolWindowFactory : ToolWindowFactory {
         }
 
         val workingDirectory = project.basePath ?: System.getProperty("user.home")
-        val panel = HerdrTerminalPanel(binaryPath, workingDirectory)
+        val terminalPanel = HerdrTerminalPanel(project, binaryPath, workingDirectory)
 
         val sessionState = HerdrSessionState.getInstance(project)
         val sessionName = sessionState.state.sessionName.ifBlank { project.name }
-        panel.attachSession(sessionName)
+        terminalPanel.attachSession(sessionName)
         sessionState.state.sessionName = sessionName
 
-        val content = ContentFactory.getInstance().createContent(panel, null, false).apply {
-            setDisposer(Disposable { panel.dispose() })
+        val contentManager = toolWindow.contentManager
+        val terminalContent = ContentFactory.getInstance().createContent(terminalPanel, "Terminal", false).apply {
+            setDisposer(Disposable { terminalPanel.dispose() })
         }
-        toolWindow.contentManager.addContent(content)
-        toolWindow.setTitleActions(listOf(SwitchHerdrSessionAction(project, binaryPath, panel)))
+        contentManager.addContent(terminalContent)
+
+        val agentsPanel = HerdrAgentsPanel(project, binaryPath) { agent ->
+            terminalPanel.attachSession(agent.sessionName)
+            sessionState.state.sessionName = agent.sessionName
+            HerdrCli.focusAgent(binaryPath, agent.sessionName, agent.paneId)
+            contentManager.setSelectedContent(terminalContent)
+        }
+        val agentsContent = ContentFactory.getInstance().createContent(agentsPanel, "Agents", false).apply {
+            setDisposer(agentsPanel)
+        }
+        contentManager.addContent(agentsContent)
+
+        toolWindow.setTitleActions(listOf(SwitchHerdrSessionAction(project, binaryPath, terminalPanel)))
     }
 
     private fun createBinaryNotFoundContent() = run {

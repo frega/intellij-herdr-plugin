@@ -1,5 +1,6 @@
 package dev.lassen.herdr
 
+import com.intellij.openapi.project.Project
 import com.intellij.terminal.pty.PtyProcessTtyConnector
 import com.jediterm.terminal.ui.settings.DefaultSettingsProvider
 import com.pty4j.PtyProcessBuilder
@@ -9,6 +10,7 @@ import javax.swing.JPanel
 
 /** Hosts one embedded herdr terminal, and can be re-pointed at a different `--session` in place. */
 class HerdrTerminalPanel(
+    private val project: Project,
     private val binaryPath: String,
     private val workingDirectory: String,
 ) : JPanel(BorderLayout()) {
@@ -34,6 +36,7 @@ class HerdrTerminalPanel(
             .start()
 
         val newWidget = ScrollbarlessTerminalWidget(80, 24, DefaultSettingsProvider())
+        newWidget.addHyperlinkFilter(HerdrLinkFilter(project))
         newWidget.setTtyConnector(PtyProcessTtyConnector(process, StandardCharsets.UTF_8))
         newWidget.start()
 

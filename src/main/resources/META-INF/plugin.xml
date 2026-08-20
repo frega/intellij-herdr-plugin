@@ -18,6 +18,7 @@
                 instance="dev.lassen.herdr.settings.HerdrSettingsConfigurable"
                 id="dev.lassen.herdr.settings.HerdrSettingsConfigurable"
                 displayName="Herdr"/>
+        <notificationGroup id="Herdr" displayType="BALLOON"/>
     </extensions>
 
     <actions>
