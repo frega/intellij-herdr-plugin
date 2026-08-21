@@ -33,16 +33,18 @@ class HerdrToolWindowFactory : ToolWindowFactory {
         }
         contentManager.addContent(terminalContent)
 
-        val agentsPanel = HerdrAgentsPanel(project, binaryPath) { agent ->
-            terminalPanel.attachSession(agent.sessionName)
-            sessionState.state.sessionName = agent.sessionName
-            HerdrCli.focusAgent(binaryPath, agent.sessionName, agent.paneId)
-            contentManager.setSelectedContent(terminalContent)
+        if (HerdrSettingsState.getInstance().state.showAgentsList) {
+            val agentsPanel = HerdrAgentsPanel(project, binaryPath) { agent ->
+                terminalPanel.attachSession(agent.sessionName)
+                sessionState.state.sessionName = agent.sessionName
+                HerdrCli.focusAgent(binaryPath, agent.sessionName, agent.paneId)
+                contentManager.setSelectedContent(terminalContent)
+            }
+            val agentsContent = ContentFactory.getInstance().createContent(agentsPanel, "Agents", false).apply {
+                setDisposer(agentsPanel)
+            }
+            contentManager.addContent(agentsContent)
         }
-        val agentsContent = ContentFactory.getInstance().createContent(agentsPanel, "Agents", false).apply {
-            setDisposer(agentsPanel)
-        }
-        contentManager.addContent(agentsContent)
 
         toolWindow.setTitleActions(listOf(SwitchHerdrSessionAction(project, binaryPath, terminalPanel)))
     }

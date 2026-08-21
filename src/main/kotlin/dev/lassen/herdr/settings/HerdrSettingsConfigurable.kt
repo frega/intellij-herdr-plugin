@@ -3,6 +3,7 @@ package dev.lassen.herdr.settings
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.FormBuilder
 import dev.lassen.herdr.HerdrBinaryLocator
@@ -16,6 +17,7 @@ class HerdrSettingsConfigurable : Configurable {
     private val pathField = TextFieldWithBrowseButton().apply {
         addBrowseFolderListener(null, FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor())
     }
+    private val showAgentsListCheckBox = JBCheckBox("Show Agents list tab")
 
     override fun getDisplayName(): String = "Herdr"
 
@@ -23,6 +25,7 @@ class HerdrSettingsConfigurable : Configurable {
         val form = FormBuilder.createFormBuilder()
             .addComponent(statusLabel)
             .addLabeledComponent("Path to herdr binary (leave empty to auto-detect):", pathField)
+            .addComponent(showAgentsListCheckBox)
             .panel
 
         // Pin content to the top instead of letting it be vertically centered in the settings page.
@@ -32,15 +35,18 @@ class HerdrSettingsConfigurable : Configurable {
     }
 
     override fun isModified(): Boolean =
-        pathField.text != HerdrSettingsState.getInstance().state.binaryPath
+        pathField.text != HerdrSettingsState.getInstance().state.binaryPath ||
+            showAgentsListCheckBox.isSelected != HerdrSettingsState.getInstance().state.showAgentsList
 
     override fun apply() {
         HerdrSettingsState.getInstance().state.binaryPath = pathField.text
+        HerdrSettingsState.getInstance().state.showAgentsList = showAgentsListCheckBox.isSelected
         updateStatusLabel()
     }
 
     override fun reset() {
         pathField.text = HerdrSettingsState.getInstance().state.binaryPath
+        showAgentsListCheckBox.isSelected = HerdrSettingsState.getInstance().state.showAgentsList
         updateStatusLabel()
     }
 

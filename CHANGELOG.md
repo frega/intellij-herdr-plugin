@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-08-21
+
+### Added
+
+- Settings → Tools → Herdr: "Show Agents list tab" checkbox (off by default) to control whether the "Agents" tab appears in the Herdr tool window.
+
+### Fixed
+
+- Right-clicks in the embedded herdr terminal now reach herdr's own mouse handling instead of being swallowed by JediTerm's built-in copy/paste context menu.
+
 ## [0.5.1] - 2026-08-20
 
 ### Changed

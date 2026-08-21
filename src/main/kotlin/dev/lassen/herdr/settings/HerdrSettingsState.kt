@@ -13,6 +13,7 @@ class HerdrSettingsState : PersistentStateComponent<HerdrSettingsState.State> {
 
     class State {
         var binaryPath: String = ""
+        var showAgentsList: Boolean = false
     }
 
     private var state = State()

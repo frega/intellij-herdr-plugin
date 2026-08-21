@@ -1,8 +1,14 @@
 package dev.lassen.herdr
 
+import com.jediterm.terminal.model.StyleState
+import com.jediterm.terminal.model.TerminalTextBuffer
 import com.jediterm.terminal.ui.JediTermWidget
+import com.jediterm.terminal.ui.TerminalActionProvider
+import com.jediterm.terminal.ui.TerminalPanel
 import com.jediterm.terminal.ui.settings.SettingsProvider
+import java.awt.Component
 import java.awt.Dimension
+import javax.swing.JPopupMenu
 import javax.swing.JScrollBar
 
 /**
@@ -18,5 +24,20 @@ class ScrollbarlessTerminalWidget(
 
     override fun createScrollBar(): JScrollBar = object : JScrollBar() {
         override fun getPreferredSize(): Dimension = Dimension(0, 0)
+    }
+
+    // JediTerm's TerminalPanel always pops up its own copy/paste context menu on right-click,
+    // regardless of the app's mouse mode, which swallows right-clicks herdr wants for its own
+    // SGR mouse reporting (it enables `\e[?1000h`/`?1002h`/`?1003h`/`?1006h`). Suppressing the
+    // popup lets the underlying press/release still get forwarded to herdr as mouse events.
+    override fun createTerminalPanel(
+        settingsProvider: SettingsProvider,
+        styleState: StyleState,
+        textBuffer: TerminalTextBuffer,
+    ): TerminalPanel = object : TerminalPanel(settingsProvider, textBuffer, styleState) {
+        override fun createPopupMenu(actionProvider: TerminalActionProvider): JPopupMenu =
+            object : JPopupMenu() {
+                override fun show(invoker: Component, x: Int, y: Int) = Unit
+            }
     }
 }
