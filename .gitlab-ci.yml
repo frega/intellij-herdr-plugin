@@ -1,0 +1,92 @@
+# Builds and publishes a GitLab Release whenever a tag is pushed.
+# Tag with the version from gradle.properties (e.g. `0.5.1`, a leading `v` is also accepted).
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_TAG
+
+stages:
+  - build
+  - release
+
+variables:
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+  PACKAGE_NAME: phpstorm-herdr-plugin
+
+.gradle_cache: &gradle_cache
+  key:
+    files:
+      - gradle/wrapper/gradle-wrapper.properties
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
+build:
+  stage: build
+  image: gradle:8.10.2-jdk21
+  cache:
+    <<: *gradle_cache
+  before_script:
+    - export VERSION="${CI_COMMIT_TAG#v}"
+    - GRADLE_VERSION=$(grep '^version' gradle.properties | cut -d '=' -f2 | tr -d ' ')
+    - |
+      if [ "$VERSION" != "$GRADLE_VERSION" ]; then
+        echo "Tag $CI_COMMIT_TAG (version $VERSION) does not match gradle.properties version $GRADLE_VERSION"
+        exit 1
+      fi
+  script:
+    - ./gradlew buildPlugin --console=plain
+    - |
+      awk -v ver="$VERSION" '
+        $0 ~ "^## \\[" ver "\\]" { found=1; next }
+        found && /^## \[/ { exit }
+        found { print }
+      ' CHANGELOG.md > release_notes.md
+    - |
+      if [ ! -s release_notes.md ]; then
+        echo "_No changelog entry found for $VERSION._" > release_notes.md
+      fi
+  artifacts:
+    paths:
+      - build/distributions/*.zip
+      - release_notes.md
+    expire_in: 1 week
+
+upload:
+  stage: release
+  image: curlimages/curl:8.11.1
+  needs:
+    - build
+  script:
+    - export VERSION="${CI_COMMIT_TAG#v}"
+    - ZIP_PATH=$(find build/distributions -maxdepth 1 -name '*.zip' | head -n 1)
+    - ZIP_NAME=$(basename "$ZIP_PATH")
+    - PACKAGE_URL="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}/${VERSION}/${ZIP_NAME}"
+    - |
+      curl --fail --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+           --upload-file "$ZIP_PATH" \
+           "$PACKAGE_URL"
+    - echo "ZIP_NAME=${ZIP_NAME}" >> release.env
+    - echo "PACKAGE_URL=${PACKAGE_URL}" >> release.env
+  artifacts:
+    reports:
+      dotenv: release.env
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+    - job: build
+      artifacts: true
+    - job: upload
+      artifacts: true
+  script:
+    - echo "Creating release $CI_COMMIT_TAG"
+  release:
+    tag_name: "$CI_COMMIT_TAG"
+    name: "Release $CI_COMMIT_TAG"
+    description: release_notes.md
+    assets:
+      links:
+        - name: "$ZIP_NAME"
+          url: "$PACKAGE_URL"
