@@ -3,6 +3,16 @@
 A PhpStorm plugin that runs [herdr](https://herdr.dev) in its own tool window, separate from the built-in Terminal
 tool window, so it can be viewed alongside a regular shell or detached into its own floating window.
 
+## Releases / Installation
+
+No official releases yet but find [latest in the wiki](https://git.1xinternet.de/f.lassen/intellij-herdr-plugin/-/wikis/home).
+
+Go to File > Settings > Plugins and click the Cogwheel and "Install from Disk ...", upload plugin ZIP and restart IDE.
+
+You'll need [herdr](https://herdr.dev) installed.
+
+After restart you'll have a tool in the sidebar. Default action toggle is `Control + Alt + h`.
+
 ## Features
 
 - **Dedicated tool window** — herdr runs in its own "Herdr" tool window (bottom, next to Terminal by default),
