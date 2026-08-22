@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-08-22
+
+### Fixed
+
+- Toggling "Show Agents list tab" in Settings now updates the Agents tab immediately in already-open projects, instead of only taking effect for newly opened ones.
+
 ## [0.6.0] - 2026-08-21
 
 ### Added

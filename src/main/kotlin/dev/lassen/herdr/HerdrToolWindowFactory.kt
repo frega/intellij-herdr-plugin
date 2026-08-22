@@ -2,8 +2,10 @@ package dev.lassen.herdr
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.content.ContentFactory
 import dev.lassen.herdr.settings.HerdrSessionState
 import dev.lassen.herdr.settings.HerdrSettingsState
@@ -11,6 +13,42 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 
 class HerdrToolWindowFactory : ToolWindowFactory {
+
+    companion object {
+        private const val TOOL_WINDOW_ID = "Herdr"
+
+        /** Called after the "Show Agents list tab" setting changes, to reflect it in already-open projects. */
+        fun syncAgentsTabForAllProjects() {
+            for (project in ProjectManager.getInstance().openProjects) {
+                val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TOOL_WINDOW_ID) ?: continue
+                syncAgentsTab(project, toolWindow)
+            }
+        }
+
+        private fun syncAgentsTab(project: Project, toolWindow: ToolWindow) {
+            val contentManager = toolWindow.contentManager
+            val terminalContent = contentManager.contents.find { it.component is HerdrTerminalPanel } ?: return
+            val terminalPanel = terminalContent.component as HerdrTerminalPanel
+            val existingAgentsContent = contentManager.contents.find { it.component is HerdrAgentsPanel }
+
+            if (HerdrSettingsState.getInstance().state.showAgentsList) {
+                if (existingAgentsContent != null) return
+                val sessionState = HerdrSessionState.getInstance(project)
+                val agentsPanel = HerdrAgentsPanel(project, terminalPanel.binaryPath) { agent ->
+                    terminalPanel.attachSession(agent.sessionName)
+                    sessionState.state.sessionName = agent.sessionName
+                    HerdrCli.focusAgent(terminalPanel.binaryPath, agent.sessionName, agent.paneId)
+                    contentManager.setSelectedContent(terminalContent)
+                }
+                val agentsContent = ContentFactory.getInstance().createContent(agentsPanel, "Agents", false).apply {
+                    setDisposer(agentsPanel)
+                }
+                contentManager.addContent(agentsContent)
+            } else {
+                existingAgentsContent?.let { contentManager.removeContent(it, true) }
+            }
+        }
+    }
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val binaryPath = HerdrBinaryLocator.resolve(HerdrSettingsState.getInstance().state.binaryPath)
@@ -33,18 +71,7 @@ class HerdrToolWindowFactory : ToolWindowFactory {
         }
         contentManager.addContent(terminalContent)
 
-        if (HerdrSettingsState.getInstance().state.showAgentsList) {
-            val agentsPanel = HerdrAgentsPanel(project, binaryPath) { agent ->
-                terminalPanel.attachSession(agent.sessionName)
-                sessionState.state.sessionName = agent.sessionName
-                HerdrCli.focusAgent(binaryPath, agent.sessionName, agent.paneId)
-                contentManager.setSelectedContent(terminalContent)
-            }
-            val agentsContent = ContentFactory.getInstance().createContent(agentsPanel, "Agents", false).apply {
-                setDisposer(agentsPanel)
-            }
-            contentManager.addContent(agentsContent)
-        }
+        syncAgentsTab(project, toolWindow)
 
         toolWindow.setTitleActions(listOf(SwitchHerdrSessionAction(project, binaryPath, terminalPanel)))
     }

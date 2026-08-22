@@ -1,6 +1,6 @@
 import org.jetbrains.intellij.platform.gradle.extensions.intellijPlatform
 
-rootProject.name = "phpstorm-herdr-plugin"
+rootProject.name = "intellij-herdr-plugin"
 
 pluginManagement {
     plugins {

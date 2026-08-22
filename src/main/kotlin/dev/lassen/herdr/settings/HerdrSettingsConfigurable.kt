@@ -7,6 +7,7 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.FormBuilder
 import dev.lassen.herdr.HerdrBinaryLocator
+import dev.lassen.herdr.HerdrToolWindowFactory
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -42,6 +43,7 @@ class HerdrSettingsConfigurable : Configurable {
         HerdrSettingsState.getInstance().state.binaryPath = pathField.text
         HerdrSettingsState.getInstance().state.showAgentsList = showAgentsListCheckBox.isSelected
         updateStatusLabel()
+        HerdrToolWindowFactory.syncAgentsTabForAllProjects()
     }
 
     override fun reset() {

@@ -11,7 +11,7 @@ import javax.swing.JPanel
 /** Hosts one embedded herdr terminal, and can be re-pointed at a different `--session` in place. */
 class HerdrTerminalPanel(
     private val project: Project,
-    private val binaryPath: String,
+    val binaryPath: String,
     private val workingDirectory: String,
 ) : JPanel(BorderLayout()) {
 

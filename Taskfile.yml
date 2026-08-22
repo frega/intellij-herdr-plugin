@@ -2,7 +2,7 @@ version: '3'
 
 vars:
   DIST_DIR: build/distributions
-  PLUGIN_NAME: phpstorm-herdr-plugin
+  PLUGIN_NAME: intellij-herdr-plugin
 
 tasks:
   default:
