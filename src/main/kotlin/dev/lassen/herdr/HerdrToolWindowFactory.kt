@@ -3,14 +3,13 @@ package dev.lassen.herdr
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.wm.ToolWindow
-import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.content.ContentFactory
 import dev.lassen.herdr.settings.HerdrSessionState
 import dev.lassen.herdr.settings.HerdrSettingsState
-import javax.swing.Icon
 import javax.swing.JLabel
 import javax.swing.JPanel
 
@@ -18,6 +17,9 @@ class HerdrToolWindowFactory : ToolWindowFactory {
 
     companion object {
         private const val TOOL_WINDOW_ID = "Herdr"
+
+        /** Shown to the left of each content tab's label; IntelliJ picks the _dark variant automatically. */
+        private val TAB_ICON = IconLoader.getIcon("/icons/herdr_logo.svg", HerdrToolWindowFactory::class.java)
 
         /** Called after the "Show Agents list tab" setting changes, to reflect it in already-open projects. */
         fun syncAgentsTabForAllProjects() {
@@ -43,6 +45,7 @@ class HerdrToolWindowFactory : ToolWindowFactory {
                     contentManager.setSelectedContent(terminalContent)
                 }
                 val agentsContent = ContentFactory.getInstance().createContent(agentsPanel, "Agents", false).apply {
+                    icon = TAB_ICON
                     setDisposer(agentsPanel)
                 }
                 contentManager.addContent(agentsContent)
@@ -69,6 +72,7 @@ class HerdrToolWindowFactory : ToolWindowFactory {
 
         val contentManager = toolWindow.contentManager
         val terminalContent = ContentFactory.getInstance().createContent(terminalPanel, "Terminal", false).apply {
+            icon = TAB_ICON
             setDisposer(Disposable { terminalPanel.dispose() })
         }
         contentManager.addContent(terminalContent)
@@ -86,19 +90,4 @@ class HerdrToolWindowFactory : ToolWindowFactory {
     }
 
     override fun shouldBeAvailable(project: Project) = true
-
-    // The below just restate ToolWindowFactory's own defaults. Without an explicit override, the Kotlin compiler
-    // emits a bridge method that calls straight into the (deprecated/experimental) interface default, which trips
-    // the JetBrains Marketplace API verifier even though the method is never actually used by this plugin.
-    @Suppress("OVERRIDE_DEPRECATION")
-    override fun isApplicable(project: Project) = true
-
-    @Suppress("OVERRIDE_DEPRECATION")
-    override val isDoNotActivateOnStart = false
-
-    override val anchor: ToolWindowAnchor? = null
-
-    override val icon: Icon? = null
-
-    override suspend fun manage(toolWindow: ToolWindow, toolWindowManager: ToolWindowManager) {}
 }
