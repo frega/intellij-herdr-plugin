@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-08-22
+
+### Changed
+
+- Description/README no longer refer to PhpStorm exclusively; the plugin only relies on generic IntelliJ Platform APIs and should work in any IntelliJ Platform IDE.
+- Install instructions now point to the GitLab Releases page instead of the wiki, with a screenshot of the "Install Plugin from Disk" menu.
+
+### Fixed
+
+- Removed JetBrains Marketplace-flagged deprecated/experimental `ToolWindowFactory` API usages (Kotlin was auto-generating bridge overrides that delegated into those APIs even though the plugin never called them); no behavior change.
+
 ## [0.6.1] - 2026-08-22
 
 ### Fixed
