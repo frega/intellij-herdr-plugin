@@ -4,7 +4,7 @@
     <name>Herdr</name>
     <vendor>Fredrik Lassen</vendor>
     <description><![CDATA[
-        Runs <a href="https://herdr.dev">herdr</a> in its own PhpStorm tool window, separate from the built-in Terminal tool window,
+        Runs <a href="https://herdr.dev">herdr</a> in its own tool window, separate from the built-in Terminal tool window,
         so it can be viewed alongside a regular shell or detached into its own floating window.
     ]]></description>
 

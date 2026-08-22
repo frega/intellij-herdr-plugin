@@ -1,7 +1,10 @@
-# Herdr for PhpStorm
+# Herdr for IntelliJ
 
-A PhpStorm plugin that runs [herdr](https://herdr.dev) in its own tool window, separate from the built-in Terminal
-tool window, so it can be viewed alongside a regular shell or detached into its own floating window.
+An IntelliJ Platform plugin that runs [herdr](https://herdr.dev) in its own tool window, separate from the built-in
+Terminal tool window, so it can be viewed alongside a regular shell or detached into its own floating window.
+
+Works in any IntelliJ Platform IDE (IntelliJ IDEA, PyCharm, WebStorm, GoLand, RubyMine, CLion, Rider, etc.); only
+tested against PhpStorm so far.
 
 ## Releases / Installation
 
@@ -28,7 +31,8 @@ After restart you'll have a tool in the sidebar. Default action toggle is `Contr
 
 ## Requirements
 
-- PhpStorm 2026.2+
+- An IntelliJ Platform IDE, 2026.2+ (developed/tested against PhpStorm; should work on IntelliJ IDEA, PyCharm,
+  WebStorm, GoLand, RubyMine, CLion, Rider, etc.)
 - The [herdr](https://herdr.dev) CLI installed and available on your `PATH` (or configured explicitly in settings)
 
 ## Development
@@ -38,7 +42,7 @@ and a [Taskfile](https://taskfile.dev) for common commands:
 
 ```bash
 task compile   # quick compile check, no packaging
-task run       # launch a sandboxed PhpStorm with the plugin installed
+task run       # launch a sandboxed IDE with the plugin installed
 task build     # build the installable plugin zip
 task release   # bump the version and build the zip (LEVEL=patch|minor|major)
 ```

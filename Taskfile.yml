@@ -22,7 +22,7 @@ tasks:
       - task: zip-path
 
   run:
-    desc: Launch a sandboxed PhpStorm with the plugin installed, for manual testing
+    desc: Launch a sandboxed IDE (currently PhpStorm, per build.gradle.kts) with the plugin installed, for manual testing
     cmds:
       - ./gradlew runIde --console=plain
 
