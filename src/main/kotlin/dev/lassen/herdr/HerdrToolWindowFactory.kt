@@ -4,11 +4,13 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.content.ContentFactory
 import dev.lassen.herdr.settings.HerdrSessionState
 import dev.lassen.herdr.settings.HerdrSettingsState
+import javax.swing.Icon
 import javax.swing.JLabel
 import javax.swing.JPanel
 
@@ -84,4 +86,19 @@ class HerdrToolWindowFactory : ToolWindowFactory {
     }
 
     override fun shouldBeAvailable(project: Project) = true
+
+    // The below just restate ToolWindowFactory's own defaults. Without an explicit override, the Kotlin compiler
+    // emits a bridge method that calls straight into the (deprecated/experimental) interface default, which trips
+    // the JetBrains Marketplace API verifier even though the method is never actually used by this plugin.
+    @Suppress("OVERRIDE_DEPRECATION")
+    override fun isApplicable(project: Project) = true
+
+    @Suppress("OVERRIDE_DEPRECATION")
+    override val isDoNotActivateOnStart = false
+
+    override val anchor: ToolWindowAnchor? = null
+
+    override val icon: Icon? = null
+
+    override suspend fun manage(toolWindow: ToolWindow, toolWindowManager: ToolWindowManager) {}
 }
