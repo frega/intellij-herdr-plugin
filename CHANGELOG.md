@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-08-22
+
+### Added
+
+- The Herdr logo now shows to the left of the "Terminal" and "Agents" tab labels in the tool window.
+
+### Fixed
+
+- Actually stopped Kotlin from generating `ToolWindowFactory` compatibility-bridge overrides for deprecated/experimental members (0.6.2 only suppressed the compiler warning about them; the bridges — including two for methods never even referenced in source — were still being emitted). Compiling with `-Xjvm-default=all` avoids them entirely, so the explicit override boilerplate could be removed too.
+
 ## [0.6.2] - 2026-08-22
 
 ### Changed
