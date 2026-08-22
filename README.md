@@ -8,9 +8,12 @@ tested against PhpStorm so far.
 
 ## Releases / Installation
 
-No official releases yet but find [latest in the wiki](https://git.1xinternet.de/f.lassen/intellij-herdr-plugin/-/wikis/home).
+Download the plugin ZIP from [Releases](https://git.1xinternet.de/f.lassen/intellij-herdr-plugin/-/releases).
 
-Go to File > Settings > Plugins and click the Cogwheel and "Install from Disk ...", upload plugin ZIP and restart IDE.
+Go to File > Settings > Plugins, click the Cogwheel, then "Install Plugin from Disk...", select the ZIP and restart
+the IDE.
+
+![Install Plugin from Disk](.github/readme/install-from-disk.png)
 
 You'll need [herdr](https://herdr.dev) installed.
 
