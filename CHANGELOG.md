@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### Added
+
+- "Connect All to IDE" title-bar action: runs `/ide` in every running Claude Code agent pane across all herdr sessions, so they connect to this IDE without typing `/ide` manually in each one.
+
+## [0.7.1] - 2026-09-13
+
+### Fixed
+
+- Right-clicks in the embedded herdr terminal now actually reach herdr's own mouse handling. The 0.6.0 fix only stopped JediTerm's built-in copy/paste popup from covering it up; the bundled JediTerm's own button-code mapping treats the right button as unreportable, so it was silently dropping every right-click before it ever reached herdr's SGR mouse reporting. Right-clicks are now encoded and forwarded manually.
+
 ## [0.7.0] - 2026-08-22
 
 ### Added

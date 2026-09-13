@@ -8,6 +8,8 @@ import com.jediterm.terminal.ui.TerminalPanel
 import com.jediterm.terminal.ui.settings.SettingsProvider
 import java.awt.Component
 import java.awt.Dimension
+import java.awt.event.MouseEvent
+import java.nio.charset.StandardCharsets
 import javax.swing.JPopupMenu
 import javax.swing.JScrollBar
 
@@ -27,9 +29,13 @@ class ScrollbarlessTerminalWidget(
     }
 
     // JediTerm's TerminalPanel always pops up its own copy/paste context menu on right-click,
-    // regardless of the app's mouse mode, which swallows right-clicks herdr wants for its own
-    // SGR mouse reporting (it enables `\e[?1000h`/`?1002h`/`?1003h`/`?1006h`). Suppressing the
-    // popup lets the underlying press/release still get forwarded to herdr as mouse events.
+    // regardless of the app's mouse mode, which would otherwise cover up herdr's own right-click
+    // handling. Suppressing it is necessary but not sufficient: the bundled TerminalPanel's own
+    // AWT-button-code mapping treats the right button as unreportable (maps it to -1, its "no
+    // button" sentinel), so JediTerminal silently drops every right mousePressed/mouseReleased
+    // before it ever reaches herdr's SGR mouse reporting (it enables
+    // `\e[?1000h`/`?1002h`/`?1003h`/`?1006h`). processMouseEvent below forwards right-clicks to
+    // herdr manually, encoding the SGR report ourselves, since the library can't.
     override fun createTerminalPanel(
         settingsProvider: SettingsProvider,
         styleState: StyleState,
@@ -39,5 +45,27 @@ class ScrollbarlessTerminalWidget(
             object : JPopupMenu() {
                 override fun show(invoker: Component, x: Int, y: Int) = Unit
             }
+
+        override fun processMouseEvent(e: MouseEvent) {
+            if (e.button == MouseEvent.BUTTON3 &&
+                (e.id == MouseEvent.MOUSE_PRESSED || e.id == MouseEvent.MOUSE_RELEASED) &&
+                isRemoteMouseAction(e)
+            ) {
+                sendRightClickSgrReport(e)
+            }
+            super.processMouseEvent(e)
+        }
+
+        private fun sendRightClickSgrReport(e: MouseEvent) {
+            val column = e.x / myCharSize.width + 1
+            val row = e.y / myCharSize.height + 1
+            var buttonCode = 2 // right button, per the SGR mouse protocol
+            if (e.isShiftDown) buttonCode = buttonCode or 4
+            if (e.isAltDown) buttonCode = buttonCode or 8
+            if (e.isControlDown) buttonCode = buttonCode or 16
+            val kind = if (e.id == MouseEvent.MOUSE_PRESSED) 'M' else 'm'
+            val report = "\u001b[<$buttonCode;$column;$row$kind"
+            terminalOutputStream.sendBytes(report.toByteArray(StandardCharsets.US_ASCII), true)
+        }
     }
 }
