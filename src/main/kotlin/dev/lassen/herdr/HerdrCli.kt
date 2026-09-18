@@ -14,6 +14,7 @@ object HerdrCli {
         val workspaceId: String,
         val status: String,
         val title: String,
+        val tool: String,
     )
 
     /** Runs `herdr session list --json` and parses the result; returns an empty list on any failure. */
@@ -61,6 +62,13 @@ object HerdrCli {
         }
     }
 
+    /** Runs `herdr --session <name> agent prompt <paneId> /ide`, fire-and-forget. */
+    fun connectAgentToIde(binaryPath: String, sessionName: String, paneId: String) {
+        runCatching {
+            ProcessBuilder(binaryPath, "--session", sessionName, "agent", "prompt", paneId, "/ide").start()
+        }
+    }
+
     private fun JsonObject.toAgent(sessionName: String): Agent {
         val title = get("terminal_title_stripped")?.takeIf { !it.isJsonNull }?.asString
             ?: get("pane_id").asString
@@ -71,6 +79,7 @@ object HerdrCli {
             workspaceId = get("workspace_id").asString,
             status = get("agent_status").asString,
             title = title,
+            tool = get("agent").asString,
         )
     }
 }

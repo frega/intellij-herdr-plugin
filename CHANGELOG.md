@@ -4,9 +4,15 @@
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-09-18
+
 ### Added
 
 - "Connect All to IDE" title-bar action: runs `/ide` in every running Claude Code agent pane across all herdr sessions, so they connect to this IDE without typing `/ide` manually in each one.
+
+### Fixed
+
+- Clickable URLs in the embedded herdr terminal no longer swallow trailing punctuation from surrounding prose/markdown (e.g. a closing `)` when an agent writes `Report here (https://example.com/x)`), while URLs that legitimately end in a balanced bracket (e.g. a Wikipedia `_(disambiguation)` link) are left untouched.
 
 ## [0.7.1] - 2026-09-13
 

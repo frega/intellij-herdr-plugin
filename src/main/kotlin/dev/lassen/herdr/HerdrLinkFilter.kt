@@ -17,6 +17,29 @@ private val URL_PATTERN = Regex("""https?://\S+""")
 // Loose on purpose: a match only becomes a link once it resolves to a real file under the project root.
 private val PATH_PATTERN = Regex("""(?:[\w.-]+/)+[\w.-]+(?::(\d+)(?::(\d+))?)?""")
 
+private val URL_TRAILING_PUNCTUATION = ".,;:!?\"'".toSet()
+private val URL_UNBALANCED_CLOSERS = mapOf(')' to '(', ']' to '[', '}' to '{')
+
+/**
+ * Prose/markdown often wraps or follows a URL with punctuation (e.g. `(https://example.com/x)` or
+ * `see https://example.com/x.`), which `\S+` happily swallows. Strip trailing sentence punctuation
+ * unconditionally, and a trailing bracket only if it's unbalanced within the match, so URLs that
+ * legitimately end in one (e.g. a Wikipedia `_(disambiguation)` link) are left alone.
+ */
+private fun trimTrailingPunctuation(url: String): String {
+    var end = url.length
+    while (end > 0) {
+        val c = url[end - 1]
+        val opener = URL_UNBALANCED_CLOSERS[c]
+        end = when {
+            c in URL_TRAILING_PUNCTUATION -> end - 1
+            opener != null && url.count { it == c } > url.count { it == opener } -> end - 1
+            else -> break
+        }
+    }
+    return url.substring(0, end)
+}
+
 /** Makes URLs open in the system browser, and project file paths (optionally `path:line:col`) open in the editor. */
 class HerdrLinkFilter(private val project: Project) : HyperlinkFilter {
 
@@ -24,8 +47,10 @@ class HerdrLinkFilter(private val project: Project) : HyperlinkFilter {
         val items = mutableListOf<LinkResultItem>()
 
         for (match in URL_PATTERN.findAll(line)) {
-            val url = match.value
-            items += LinkResultItem(match.range.first, match.range.last + 1, LinkInfo { BrowserUtil.browse(url) })
+            val url = trimTrailingPunctuation(match.value)
+            if (url.isEmpty()) continue
+            val end = match.range.first + url.length
+            items += LinkResultItem(match.range.first, end, LinkInfo { BrowserUtil.browse(url) })
         }
 
         for (match in PATH_PATTERN.findAll(line)) {

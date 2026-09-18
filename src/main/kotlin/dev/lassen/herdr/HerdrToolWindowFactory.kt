@@ -79,7 +79,12 @@ class HerdrToolWindowFactory : ToolWindowFactory {
 
         syncAgentsTab(project, toolWindow)
 
-        toolWindow.setTitleActions(listOf(SwitchHerdrSessionAction(project, binaryPath, terminalPanel)))
+        toolWindow.setTitleActions(
+            listOf(
+                SwitchHerdrSessionAction(project, binaryPath, terminalPanel),
+                ConnectAgentsToIdeAction(project, binaryPath),
+            ),
+        )
     }
 
     private fun createBinaryNotFoundContent() = run {
