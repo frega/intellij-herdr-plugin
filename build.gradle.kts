@@ -24,3 +24,14 @@ dependencies {
         testFramework(TestFrameworkType.Platform)
     }
 }
+
+intellijPlatform {
+    pluginVerification {
+        ides {
+            // Also check the next IDE branch: verifyPlugin otherwise only checks the build the
+            // plugin is compiled against (phpstorm 2026.2 / 262.x above), which wouldn't have
+            // caught the internal PtyProcessTtyConnector signature change that broke 0.7.2 on 263.
+            create(org.jetbrains.intellij.platform.gradle.IntelliJPlatformType.IntellijIdeaUltimate, "263.5153.40")
+        }
+    }
+}

@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [0.7.3] - 2026-09-18
+
+### Fixed
+
+- The embedded herdr terminal no longer fails to start on IntelliJ Platform 2026.3+ builds (e.g. IU-263.5153.40) with `NoSuchMethodError`/unresolved-constructor errors. 0.7.2 relied on `com.intellij.terminal.pty.PtyProcessTtyConnector`, an internal platform class whose constructor signature changed between build 262 and 263; the plugin now implements its own minimal `TtyConnector` directly on the stable pty4j/JediTerm APIs instead.
+
 ## [0.7.2] - 2026-09-18
 
 ### Added
