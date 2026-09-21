@@ -1,7 +1,6 @@
 package dev.lassen.herdr
 
 import com.intellij.openapi.project.Project
-import com.jediterm.terminal.ui.settings.DefaultSettingsProvider
 import com.pty4j.PtyProcessBuilder
 import java.awt.BorderLayout
 import java.nio.charset.StandardCharsets
@@ -34,7 +33,7 @@ class HerdrTerminalPanel(
             .setInitialRows(24)
             .start()
 
-        val newWidget = ScrollbarlessTerminalWidget(80, 24, DefaultSettingsProvider())
+        val newWidget = ScrollbarlessTerminalWidget(80, 24, HerdrTerminalSettingsProvider())
         newWidget.addHyperlinkFilter(HerdrLinkFilter(project))
         newWidget.setTtyConnector(HerdrTtyConnector(process, StandardCharsets.UTF_8))
         newWidget.start()
