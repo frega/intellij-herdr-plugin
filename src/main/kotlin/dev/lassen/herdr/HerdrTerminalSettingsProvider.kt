@@ -99,4 +99,9 @@ class HerdrTerminalSettingsProvider : DefaultSettingsProvider() {
     override fun getTerminalFontSize(): Float = scheme().consoleFontSize2D
 
     override fun getTerminalFont(): Font = scheme().getFont(EditorFontType.CONSOLE_PLAIN).deriveFont(getTerminalFontSize())
+
+    // Defaults to false, so Shift+Enter sends the same CR as plain Enter and submits early instead
+    // of inserting a newline. herdr panes exist to host coding agents (multi-line prompts are the
+    // common case), so send ESC CR instead, the same convention the IDE's own Terminal opts into.
+    override fun shiftEnterSendsEscCR(): Boolean = true
 }
