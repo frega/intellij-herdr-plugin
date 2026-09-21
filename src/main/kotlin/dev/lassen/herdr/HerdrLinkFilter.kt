@@ -40,26 +40,43 @@ private fun trimTrailingPunctuation(url: String): String {
     return url.substring(0, end)
 }
 
+/** A URL span the filter detected in a line, and the exact target it would open. */
+internal data class DetectedUrlLink(val start: Int, val end: Int, val target: String)
+
+/** A path-like span the filter detected in a line, before checking whether it resolves to a real project file. */
+internal data class DetectedPathToken(val start: Int, val end: Int, val rawPath: String, val line: Int?, val column: Int?)
+
+/** Which substrings of [lineText] look like URLs, and what each one would link to once trimmed. */
+internal fun detectUrlLinks(lineText: String): List<DetectedUrlLink> =
+    URL_PATTERN.findAll(lineText).mapNotNull { match ->
+        val url = trimTrailingPunctuation(match.value)
+        if (url.isEmpty()) return@mapNotNull null
+        DetectedUrlLink(match.range.first, match.range.first + url.length, url)
+    }.toList()
+
+/** Which substrings of [lineText] look like project-relative paths, before filesystem resolution. */
+internal fun detectPathTokens(lineText: String): List<DetectedPathToken> =
+    PATH_PATTERN.findAll(lineText).map { match ->
+        val rawPath = match.value.substringBefore(':')
+        val lineNumber = match.groupValues.getOrNull(1)?.toIntOrNull()
+        val column = match.groupValues.getOrNull(2)?.toIntOrNull()
+        DetectedPathToken(match.range.first, match.range.last + 1, rawPath, lineNumber, column)
+    }.toList()
+
 /** Makes URLs open in the system browser, and project file paths (optionally `path:line:col`) open in the editor. */
 class HerdrLinkFilter(private val project: Project) : HyperlinkFilter {
 
     override fun apply(line: String): LinkResult? {
         val items = mutableListOf<LinkResultItem>()
 
-        for (match in URL_PATTERN.findAll(line)) {
-            val url = trimTrailingPunctuation(match.value)
-            if (url.isEmpty()) continue
-            val end = match.range.first + url.length
-            items += LinkResultItem(match.range.first, end, LinkInfo { BrowserUtil.browse(url) })
+        for (link in detectUrlLinks(line)) {
+            items += LinkResultItem(link.start, link.end, LinkInfo { BrowserUtil.browse(link.target) })
         }
 
-        for (match in PATH_PATTERN.findAll(line)) {
-            val rawPath = match.value.substringBefore(':')
-            val file = resolveProjectFile(rawPath) ?: continue
-            val lineNumber = match.groupValues.getOrNull(1)?.toIntOrNull()
-            val column = match.groupValues.getOrNull(2)?.toIntOrNull()
-            items += LinkResultItem(match.range.first, match.range.last + 1, LinkInfo {
-                openInEditor(file, lineNumber, column)
+        for (token in detectPathTokens(line)) {
+            val file = resolveProjectFile(token.rawPath) ?: continue
+            items += LinkResultItem(token.start, token.end, LinkInfo {
+                openInEditor(file, token.line, token.column)
             })
         }
 
