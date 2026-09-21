@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [0.7.4] - 2026-09-21
+
+### Fixed
+
+- The embedded herdr terminal now follows the IDE's active color scheme (light or dark) instead of always rendering black text on a white background, regardless of theme.
+
 ## [0.7.3] - 2026-09-18
 
 ### Fixed
