@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [0.7.5] - 2026-09-21
+
+### Fixed
+
+- Shift+Enter in the embedded herdr terminal now inserts a newline instead of submitting early, matching the IDE's own built-in Terminal.
+
 ## [0.7.4] - 2026-09-21
 
 ### Fixed
