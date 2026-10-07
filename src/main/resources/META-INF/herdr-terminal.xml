@@ -1,0 +1,6 @@
+<!-- Loaded only when the bundled Terminal plugin is enabled (see the optional <depends> in plugin.xml). -->
+<idea-plugin>
+    <extensions defaultExtensionNs="org.jetbrains.plugins.terminal">
+        <allowedActionsProvider implementation="dev.lassen.herdr.HerdrTerminalAllowedActionsProvider"/>
+    </extensions>
+</idea-plugin>

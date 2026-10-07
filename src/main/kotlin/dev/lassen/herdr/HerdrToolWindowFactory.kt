@@ -43,6 +43,7 @@ class HerdrToolWindowFactory : ToolWindowFactory {
                     sessionState.state.sessionName = agent.sessionName
                     HerdrCli.focusAgent(terminalPanel.binaryPath, agent.sessionName, agent.paneId)
                     contentManager.setSelectedContent(terminalContent)
+                    terminalPanel.focusTerminal()
                 }
                 val agentsContent = ContentFactory.getInstance().createContent(agentsPanel, "Agents", false).apply {
                     icon = TAB_ICON
@@ -74,6 +75,7 @@ class HerdrToolWindowFactory : ToolWindowFactory {
         val terminalContent = ContentFactory.getInstance().createContent(terminalPanel, "Terminal", false).apply {
             icon = TAB_ICON
             setDisposer(Disposable { terminalPanel.dispose() })
+            setPreferredFocusedComponent { terminalPanel.focusTarget }
         }
         contentManager.addContent(terminalContent)
 

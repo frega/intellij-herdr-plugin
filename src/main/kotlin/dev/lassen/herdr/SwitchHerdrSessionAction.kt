@@ -34,6 +34,7 @@ class SwitchHerdrSessionAction(
         }
         if (!sessionName.isNullOrBlank()) {
             panel.attachSession(sessionName)
+            panel.focusTerminal()
             HerdrSessionState.getInstance(project).state.sessionName = sessionName
         }
     }
