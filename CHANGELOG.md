@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Quitting the IDE no longer asks twice whether to suspend a project's herdr session after you choose "Keep Running".
+
 ## [0.8.0] - 2026-10-10
 
 ### Added
