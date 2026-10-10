@@ -27,6 +27,7 @@ class SuspendHerdrSessionAction(
     override fun getActionUpdateThread() = ActionUpdateThread.EDT
 
     override fun update(e: AnActionEvent) {
+        e.presentation.isEnabled = panel.mode != HerdrTerminalPanel.Mode.SHUTTING_DOWN
         if (panel.isSuspended) {
             e.presentation.text = "Reawake Herdr Session"
             e.presentation.description = "Start the session again, restoring its layout and agents"
@@ -75,6 +76,7 @@ class SuspendHerdrSessionAction(
     }
 
     private fun suspend(sessionName: String, running: Boolean) {
+        panel.showShuttingDown(sessionName)
         ApplicationManager.getApplication().executeOnPooledThread {
             val error = if (running) HerdrCli.stopSession(binaryPath, sessionName) else null
             ApplicationManager.getApplication().invokeLater {
@@ -82,6 +84,8 @@ class SuspendHerdrSessionAction(
                     NotificationGroupManager.getInstance().getNotificationGroup("Herdr")
                         .createNotification("Could not suspend herdr session '$sessionName': $error", NotificationType.ERROR)
                         .notify(project)
+                    // The session is still running; bring its terminal back.
+                    panel.attachSession(sessionName)
                     return@invokeLater
                 }
                 panel.showSuspended(sessionName)
