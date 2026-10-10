@@ -21,6 +21,7 @@
                 displayName="Herdr"/>
         <notificationGroup id="Herdr" displayType="BALLOON"/>
         <projectCloseHandler implementation="dev.lassen.herdr.HerdrProjectCloseHandler"/>
+        <postStartupActivity implementation="dev.lassen.herdr.HerdrShortcutNotice"/>
     </extensions>
 
     <actions>
