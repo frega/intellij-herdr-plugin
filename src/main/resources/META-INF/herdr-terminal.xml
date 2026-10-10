@@ -2,5 +2,6 @@
 <idea-plugin>
     <extensions defaultExtensionNs="org.jetbrains.plugins.terminal">
         <allowedActionsProvider implementation="dev.lassen.herdr.HerdrTerminalAllowedActionsProvider"/>
+        <openPredefinedTerminalProvider implementation="dev.lassen.herdr.HerdrOpenPredefinedTerminalProvider"/>
     </extensions>
 </idea-plugin>

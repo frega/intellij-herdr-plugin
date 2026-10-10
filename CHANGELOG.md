@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- "Herdr" now shows up in the built-in Terminal tool window's "New Predefined Session" picker (the dropdown next to its `+` button) ([#3](https://github.com/frega/intellij-herdr-plugin/issues/3)), so you can open the current project's herdr session as a tab of the default terminal, the same way CLI-agent plugins like Junie or Claude Code do, instead of only in Herdr's own tool window.
+
 ### Fixed
 
 - The "Open Herdr" shortcut now moves keyboard focus into the embedded herdr terminal instead of only bringing the tool window to the front ([#2](https://github.com/frega/intellij-herdr-plugin/issues/2)). Switching sessions or picking an agent from the Agents tab focuses the terminal as well.
