@@ -55,20 +55,7 @@ class SuspendHerdrSessionAction(
     }
 
     private fun confirm(sessionName: String, summary: HerdrCli.SessionSummary): Boolean {
-        val message = buildString {
-            if (summary.running) {
-                append("${plural(summary.workspaces, "workspace")}, ${plural(summary.tabs, "tab")} will be closed.")
-                if (summary.busyAgents > 0) {
-                    append("\n\n${plural(summary.busyAgents, "agent")} still working or waiting for input will be interrupted.")
-                }
-                append("\n\nAny other window or terminal attached to this session is disconnected too.")
-            } else {
-                append("The session isn't running.")
-            }
-            append("\n\nReawaking restores the layout and resumes the agents' conversations; ")
-            append("scrollback and other running processes are not restored.")
-        }
-        return MessageDialogBuilder.yesNo("Suspend herdr session '$sessionName'?", message)
+        return MessageDialogBuilder.yesNo("Suspend herdr session '$sessionName'?", describe(summary))
             .yesText("Suspend")
             .noText("Cancel")
             .icon(if (summary.busyAgents > 0) AllIcons.General.WarningDialog else AllIcons.General.QuestionDialog)
@@ -94,5 +81,22 @@ class SuspendHerdrSessionAction(
         }
     }
 
-    private fun plural(count: Int, noun: String) = if (count == 1) "1 $noun" else "$count ${noun}s"
+    companion object {
+        /** What suspending closes and what reawaking brings back; shared with [HerdrProjectCloseHandler]. */
+        fun describe(summary: HerdrCli.SessionSummary): String = buildString {
+            if (summary.running) {
+                append("${plural(summary.workspaces, "workspace")}, ${plural(summary.tabs, "tab")} will be closed.")
+                if (summary.busyAgents > 0) {
+                    append("\n\n${plural(summary.busyAgents, "agent")} still working or waiting for input will be interrupted.")
+                }
+                append("\n\nAny other window or terminal attached to this session is disconnected too.")
+            } else {
+                append("The session isn't running.")
+            }
+            append("\n\nYou can reawake it later: layouts are kept and coding agents (e.g. Claude Code) resume their ")
+            append("conversations. Running commands (dev servers, watchers, builds) and scrollback are not kept.")
+        }
+
+        private fun plural(count: Int, noun: String) = if (count == 1) "1 $noun" else "$count ${noun}s"
+    }
 }

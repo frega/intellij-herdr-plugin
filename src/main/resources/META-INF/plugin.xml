@@ -19,6 +19,7 @@
                 id="dev.lassen.herdr.settings.HerdrSettingsConfigurable"
                 displayName="Herdr"/>
         <notificationGroup id="Herdr" displayType="BALLOON"/>
+        <projectCloseHandler implementation="dev.lassen.herdr.HerdrProjectCloseHandler"/>
     </extensions>
 
     <actions>

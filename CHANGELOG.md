@@ -6,7 +6,7 @@
 
 ### Added
 
-- Suspend and reawake the project's herdr session from the Herdr tool window title bar ([#4](https://github.com/frega/intellij-herdr-plugin/issues/4)). Suspending asks first, then stops the session to free its resources. Reawaking starts it again, and herdr restores its workspaces, layout and agent conversations.
+- Suspend and reawake the project's herdr session from the Herdr tool window title bar ([#4](https://github.com/frega/intellij-herdr-plugin/issues/4)). Suspending asks first, then stops the session to free its resources. Reawaking starts it again, and herdr restores its workspaces, layout and agent conversations. Closing a project (or quitting the IDE) while its session is running asks whether to suspend it; this can be turned off in the settings.
 
 ## [0.7.5] - 2026-09-21
 
