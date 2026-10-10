@@ -19,7 +19,7 @@ class HerdrToolWindowFactory : ToolWindowFactory {
         private const val TOOL_WINDOW_ID = "Herdr"
 
         /** Shown to the left of each content tab's label; IntelliJ picks the _dark variant automatically. */
-        private val TAB_ICON = IconLoader.getIcon("/icons/herdr_logo.svg", HerdrToolWindowFactory::class.java)
+        val TAB_ICON = IconLoader.getIcon("/icons/herdr_logo.svg", HerdrToolWindowFactory::class.java)
 
         /** Called after the "Show Agents list tab" setting changes, to reflect it in already-open projects. */
         fun syncAgentsTabForAllProjects() {
