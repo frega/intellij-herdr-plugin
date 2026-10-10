@@ -6,6 +6,7 @@
 
 ### Added
 
+- Suspend and reawake the project's herdr session from the Herdr tool window title bar ([#4](https://github.com/frega/intellij-herdr-plugin/issues/4)). Suspending asks first, then stops the session to free its resources. Reawaking starts it again, and herdr restores its workspaces, layout and agent conversations. Closing a project (or quitting the IDE) while its session is running asks whether to suspend it; this can be turned off in the settings.
 - "Herdr" now shows up in the built-in Terminal tool window's "New Predefined Session" picker (the dropdown next to its `+` button) ([#3](https://github.com/frega/intellij-herdr-plugin/issues/3)), so you can open the current project's herdr session as a tab of the default terminal, the same way CLI-agent plugins like Junie or Claude Code do, instead of only in Herdr's own tool window.
 
 ### Fixed

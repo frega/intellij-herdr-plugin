@@ -51,6 +51,51 @@ object HerdrCli {
         emptyList()
     }
 
+    data class SessionSummary(val running: Boolean, val workspaces: Int, val tabs: Int, val busyAgents: Int)
+
+    /** What a suspend would close: counts of workspaces, tabs and agents still working or waiting for input. */
+    fun sessionSummary(binaryPath: String, sessionName: String): SessionSummary {
+        if (listSessions(binaryPath).none { it.name == sessionName && it.running }) {
+            return SessionSummary(running = false, workspaces = 0, tabs = 0, busyAgents = 0)
+        }
+        val workspaces = try {
+            val process = ProcessBuilder(binaryPath, "--session", sessionName, "workspace", "list")
+                .redirectErrorStream(false)
+                .start()
+            val output = process.inputStream.bufferedReader().readText()
+            process.waitFor()
+            JsonParser.parseString(output).asJsonObject
+                .getAsJsonObject("result")
+                .getAsJsonArray("workspaces")
+                .map { it.asJsonObject }
+        } catch (e: Exception) {
+            emptyList()
+        }
+        return SessionSummary(
+            running = true,
+            workspaces = workspaces.size,
+            tabs = workspaces.sumOf { it.get("tab_count")?.asInt ?: 0 },
+            busyAgents = listAgents(binaryPath, sessionName).count { it.status in BUSY_STATUSES },
+        )
+    }
+
+    /**
+     * Runs `herdr session stop <name>`. herdr keeps the session's layout and agent session refs in its
+     * session.json and restores them (resuming agents) the next time the session starts.
+     * Returns null on success, otherwise the error output.
+     */
+    fun stopSession(binaryPath: String, sessionName: String): String? = try {
+        val process = ProcessBuilder(binaryPath, "session", "stop", sessionName)
+            .redirectErrorStream(true)
+            .start()
+        val output = process.inputStream.bufferedReader().readText()
+        if (process.waitFor() == 0) null else output.trim().ifEmpty { "herdr exited with ${process.exitValue()}" }
+    } catch (e: Exception) {
+        e.message ?: e.toString()
+    }
+
+    private val BUSY_STATUSES = setOf("working", "blocked")
+
     /** Aggregates [listAgents] across every currently running session. */
     fun listAllAgents(binaryPath: String): List<Agent> =
         listSessions(binaryPath).filter { it.running }.flatMap { listAgents(binaryPath, it.name) }

@@ -19,6 +19,7 @@ class HerdrSettingsConfigurable : Configurable {
         addBrowseFolderListener(null, FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor())
     }
     private val showAgentsListCheckBox = JBCheckBox("Show Agents list tab")
+    private val askToSuspendOnCloseCheckBox = JBCheckBox("Ask to suspend the herdr session when closing a project")
 
     override fun getDisplayName(): String = "Herdr"
 
@@ -27,6 +28,7 @@ class HerdrSettingsConfigurable : Configurable {
             .addComponent(statusLabel)
             .addLabeledComponent("Path to herdr binary (leave empty to auto-detect):", pathField)
             .addComponent(showAgentsListCheckBox)
+            .addComponent(askToSuspendOnCloseCheckBox)
             .panel
 
         // Pin content to the top instead of letting it be vertically centered in the settings page.
@@ -37,11 +39,13 @@ class HerdrSettingsConfigurable : Configurable {
 
     override fun isModified(): Boolean =
         pathField.text != HerdrSettingsState.getInstance().state.binaryPath ||
-            showAgentsListCheckBox.isSelected != HerdrSettingsState.getInstance().state.showAgentsList
+            showAgentsListCheckBox.isSelected != HerdrSettingsState.getInstance().state.showAgentsList ||
+            askToSuspendOnCloseCheckBox.isSelected != HerdrSettingsState.getInstance().state.askToSuspendOnClose
 
     override fun apply() {
         HerdrSettingsState.getInstance().state.binaryPath = pathField.text
         HerdrSettingsState.getInstance().state.showAgentsList = showAgentsListCheckBox.isSelected
+        HerdrSettingsState.getInstance().state.askToSuspendOnClose = askToSuspendOnCloseCheckBox.isSelected
         updateStatusLabel()
         HerdrToolWindowFactory.syncAgentsTabForAllProjects()
     }
@@ -49,6 +53,7 @@ class HerdrSettingsConfigurable : Configurable {
     override fun reset() {
         pathField.text = HerdrSettingsState.getInstance().state.binaryPath
         showAgentsListCheckBox.isSelected = HerdrSettingsState.getInstance().state.showAgentsList
+        askToSuspendOnCloseCheckBox.isSelected = HerdrSettingsState.getInstance().state.askToSuspendOnClose
         updateStatusLabel()
     }
 
