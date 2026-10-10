@@ -19,7 +19,7 @@ class HerdrToolWindowFactory : ToolWindowFactory {
         private const val TOOL_WINDOW_ID = "Herdr"
 
         /** Shown to the left of each content tab's label; IntelliJ picks the _dark variant automatically. */
-        private val TAB_ICON = IconLoader.getIcon("/icons/herdr_logo.svg", HerdrToolWindowFactory::class.java)
+        val TAB_ICON = IconLoader.getIcon("/icons/herdr_logo.svg", HerdrToolWindowFactory::class.java)
 
         /** Called after the "Show Agents list tab" setting changes, to reflect it in already-open projects. */
         fun syncAgentsTabForAllProjects() {
@@ -43,6 +43,7 @@ class HerdrToolWindowFactory : ToolWindowFactory {
                     sessionState.state.sessionName = agent.sessionName
                     HerdrCli.focusAgent(terminalPanel.binaryPath, agent.sessionName, agent.paneId)
                     contentManager.setSelectedContent(terminalContent)
+                    terminalPanel.focusTerminal()
                 }
                 val agentsContent = ContentFactory.getInstance().createContent(agentsPanel, "Agents", false).apply {
                     icon = TAB_ICON
@@ -79,6 +80,7 @@ class HerdrToolWindowFactory : ToolWindowFactory {
         val terminalContent = ContentFactory.getInstance().createContent(terminalPanel, "Terminal", false).apply {
             icon = TAB_ICON
             setDisposer(Disposable { terminalPanel.dispose() })
+            setPreferredFocusedComponent { terminalPanel.focusTarget }
         }
         contentManager.addContent(terminalContent)
 

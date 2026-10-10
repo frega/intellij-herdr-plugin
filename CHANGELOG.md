@@ -7,6 +7,17 @@
 ### Added
 
 - Suspend and reawake the project's herdr session from the Herdr tool window title bar ([#4](https://github.com/frega/intellij-herdr-plugin/issues/4)). Suspending asks first, then stops the session to free its resources. Reawaking starts it again, and herdr restores its workspaces, layout and agent conversations. Closing a project (or quitting the IDE) while its session is running asks whether to suspend it; this can be turned off in the settings.
+- "Herdr" now shows up in the built-in Terminal tool window's "New Predefined Session" picker (the dropdown next to its `+` button) ([#3](https://github.com/frega/intellij-herdr-plugin/issues/3)), so you can open the current project's herdr session as a tab of the default terminal, the same way CLI-agent plugins like Junie or Claude Code do, instead of only in Herdr's own tool window.
+
+### Fixed
+
+- The "Open Herdr" shortcut now moves keyboard focus into the embedded herdr terminal instead of only bringing the tool window to the front ([#2](https://github.com/frega/intellij-herdr-plugin/issues/2)). Switching sessions or picking an agent from the Agents tab focuses the terminal as well.
+
+### Changed
+
+- The shortcut now toggles the tool window: pressing it while the herdr terminal has focus hides the tool window and returns focus to the editor. The action is renamed from "Open Herdr" to "Toggle Herdr"; its ID is unchanged, so custom keymap bindings keep working.
+- New default shortcut: `Alt+Shift+H` on Windows/Linux and `⌃⌥⌘H` on macOS ([#1](https://github.com/frega/intellij-herdr-plugin/issues/1)). The old `Ctrl+Alt+H` took over Call Hierarchy on Windows/Linux, and on macOS became `⌥⌘H`, which the OS reserves for "Hide Others". The new one is unbound in all bundled keymaps; macOS uses Cmd because Option+letter types characters there.
+- The shortcut now also works while the IDE's built-in Terminal has focus, which otherwise keeps every key except a fixed set of IDE actions. Uses the Terminal plugin's experimental `allowedActionsProvider` extension point, through an optional dependency, so Herdr still loads with the Terminal plugin disabled.
 
 ## [0.7.5] - 2026-09-21
 

@@ -2,6 +2,7 @@ package dev.lassen.herdr
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.AnimatedIcon
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBLabel
@@ -122,6 +123,7 @@ class HerdrTerminalPanel(
                 emptyText.appendLine("Its layout and agent sessions are restored when it starts again.")
                 emptyText.appendLine("Reawake session", SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES) {
                     attachSession(sessionName)
+                    focusTerminal()
                 }
             },
             Mode.SUSPENDED,
@@ -136,6 +138,7 @@ class HerdrTerminalPanel(
                 emptyText.text = "Disconnected from herdr session '$sessionName'"
                 emptyText.appendLine("Reattach", SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES) {
                     attachSession(sessionName)
+                    focusTerminal()
                 }
             },
             Mode.DETACHED,
@@ -164,6 +167,14 @@ class HerdrTerminalPanel(
             runCatching { old.close() }
             widget = null
         }
+    }
+
+    /** The component that receives keystrokes; changes whenever [attachSession] swaps the widget. */
+    val focusTarget: JComponent?
+        get() = widget?.terminalPanel
+
+    fun focusTerminal() {
+        focusTarget?.let { IdeFocusManager.getInstance(project).requestFocus(it, true) }
     }
 
     fun dispose() {

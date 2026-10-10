@@ -42,6 +42,7 @@ class SuspendHerdrSessionAction(
     override fun actionPerformed(e: AnActionEvent) {
         if (panel.isSuspended) {
             panel.attachSession(panel.currentSession)
+            panel.focusTerminal()
             return
         }
 
