@@ -15,6 +15,7 @@ class HerdrSettingsState : PersistentStateComponent<HerdrSettingsState.State> {
         var binaryPath: String = ""
         var showAgentsList: Boolean = false
         var askToSuspendOnClose: Boolean = true
+        var shortcutNoticeShown: Boolean = false
     }
 
     private var state = State()
