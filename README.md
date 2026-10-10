@@ -25,6 +25,11 @@ After restart you'll have a tool in the sidebar. Default action toggle is `Contr
   keeping it independent from your regular shell sessions.
 - **Session switching** — attach the tool window to any herdr session for the current project via the title-bar
   action, and the choice is remembered per-project.
+- **Suspend / reawake** — the pause button in the title bar stops the project's herdr session after asking first,
+  freeing the CPU and memory its agents and shells use. herdr keeps the workspaces, tabs, splits, working
+  directories and agent conversations, so "Reawake session" brings everything back where you left off and resumes
+  the agents. The project stays suspended across IDE restarts until you reawake it. Scrollback and other running
+  processes (dev servers, watchers) are not restored.
 - **Agents overview** — a second tab lists every herdr agent across all running sessions, sorted by what needs
   attention first (blocked > done > working > idle), with desktop notifications when an agent's status changes to
   blocked or done. Double-click an agent to jump straight to its pane.

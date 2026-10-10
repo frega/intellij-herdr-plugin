@@ -67,7 +67,12 @@ class HerdrToolWindowFactory : ToolWindowFactory {
 
         val sessionState = HerdrSessionState.getInstance(project)
         val sessionName = sessionState.state.sessionName.ifBlank { project.name }
-        terminalPanel.attachSession(sessionName)
+        // Attaching would start a suspended session again, so wait for an explicit reawake.
+        if (sessionState.state.suspended) {
+            terminalPanel.showSuspended(sessionName)
+        } else {
+            terminalPanel.attachSession(sessionName)
+        }
         sessionState.state.sessionName = sessionName
 
         val contentManager = toolWindow.contentManager
@@ -82,6 +87,7 @@ class HerdrToolWindowFactory : ToolWindowFactory {
         toolWindow.setTitleActions(
             listOf(
                 SwitchHerdrSessionAction(project, binaryPath, terminalPanel),
+                SuspendHerdrSessionAction(project, binaryPath, terminalPanel),
                 ConnectAgentsToIdeAction(project, binaryPath),
             ),
         )

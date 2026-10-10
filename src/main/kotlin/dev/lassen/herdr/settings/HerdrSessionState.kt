@@ -14,6 +14,9 @@ class HerdrSessionState : PersistentStateComponent<HerdrSessionState.State> {
 
     class State {
         var sessionName: String = ""
+
+        /** Set after "Suspend Session" stopped [sessionName]; the tool window then stays detached instead of waking it. */
+        var suspended: Boolean = false
     }
 
     private var state = State()
