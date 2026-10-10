@@ -1,9 +1,11 @@
 package dev.lassen.herdr
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.IdeFocusManager
 import com.pty4j.PtyProcessBuilder
 import java.awt.BorderLayout
 import java.nio.charset.StandardCharsets
+import javax.swing.JComponent
 import javax.swing.JPanel
 
 /** Hosts one embedded herdr terminal, and can be re-pointed at a different `--session` in place. */
@@ -43,6 +45,14 @@ class HerdrTerminalPanel(
         add(newWidget, BorderLayout.CENTER)
         revalidate()
         repaint()
+    }
+
+    /** The component that receives keystrokes; changes whenever [attachSession] swaps the widget. */
+    val focusTarget: JComponent?
+        get() = widget?.terminalPanel
+
+    fun focusTerminal() {
+        focusTarget?.let { IdeFocusManager.getInstance(project).requestFocus(it, true) }
     }
 
     fun dispose() {

@@ -9,6 +9,7 @@
     ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends optional="true" config-file="herdr-terminal.xml">org.jetbrains.plugins.terminal</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="dev.lassen.herdr.HerdrToolWindowFactory" id="Herdr" anchor="bottom" icon="/icons/ram.svg"/>
@@ -22,9 +23,12 @@
     </extensions>
 
     <actions>
-        <action id="dev.lassen.herdr.OpenHerdr" class="dev.lassen.herdr.HerdrOpenAction" text="Open Herdr"
-                description="Opens (or focuses) the Herdr tool window">
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt H"/>
+        <action id="dev.lassen.herdr.OpenHerdr" class="dev.lassen.herdr.HerdrOpenAction" text="Toggle Herdr"
+                description="Shows and focuses the Herdr terminal, or hides it when it already has focus">
+            <keyboard-shortcut keymap="$default" first-keystroke="alt shift H"/>
+            <!-- Explicit Mac bindings: Option+Shift+H would type a character on macOS. -->
+            <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="control alt meta H"/>
+            <keyboard-shortcut keymap="Mac OS X" first-keystroke="control alt meta H"/>
         </action>
     </actions>
 </idea-plugin>

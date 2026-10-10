@@ -17,7 +17,7 @@ the IDE.
 
 You'll need [herdr](https://herdr.dev) installed.
 
-After restart you'll have a tool in the sidebar. Default action toggle is `Control + Alt + h`.
+After restart you'll have a tool in the sidebar. Default action toggle is `Alt+Shift+H` (`⌃⌥⌘H` on macOS).
 
 ## Features
 
@@ -30,7 +30,7 @@ After restart you'll have a tool in the sidebar. Default action toggle is `Contr
   blocked or done. Double-click an agent to jump straight to its pane.
 - **Auto-detected binary** — the plugin locates the `herdr` binary automatically; if it can't be found, set an
   explicit path under **Settings → Tools → Herdr**.
-- **Quick open** — `Ctrl+Alt+H` opens (or focuses) the Herdr tool window from anywhere.
+- **Quick toggle** — `Alt+Shift+H` (`⌃⌥⌘H` on macOS) shows the Herdr tool window and focuses its terminal from anywhere, including from the built-in Terminal; press it again while the terminal has focus to hide it. Rebind it under Settings → Keymap → "Toggle Herdr".
 
 ## Requirements
 

@@ -21,6 +21,7 @@ dependencies {
         // pty4j and JediTerm classes come from the PhpStorm distribution itself (lib/intellij.libraries.pty4j.jar,
         // lib/intellij.libraries.jediterm.*.jar), so no separate dependency is declared for them.
         phpstorm("2026.2")
+        bundledPlugin("org.jetbrains.plugins.terminal")
         testFramework(TestFrameworkType.Platform)
     }
 }
